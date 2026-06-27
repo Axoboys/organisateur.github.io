@@ -1720,7 +1720,7 @@ function checkTodayCalTasks() {
   const tasks = calTasks[dateStr] || [];
   const pending = tasks.filter(t => !t.done);
   if (pending.length > 0) {
-    sendNotif('📅 AxoBoard — Tâches du jour', pending.length + ' tâche' + (pending.length>1?'s':'') + ' aujourd'hui : ' + pending.map(t=>t.text||'…').slice(0,3).join(', '));
+    sendNotif('📅 AxoBoard — Tâches du jour', pending.length + ' tâche' + (pending.length>1?'s':'') + " aujourd'hui : " + pending.map(t=>t.text||'…').slice(0,3).join(', '));
   }
 }
 
@@ -1766,7 +1766,7 @@ function scheduleObjNotif(obj) {
   clearTimeout(obj._timer);
   const delay = Math.max(obj.nextAt - Date.now(), 1000);
   obj._timer = setTimeout(() => {
-    sendNotif('🎯 ' + obj.name, 'C'est l'heure ! N'oublie pas : ' + obj.name + ' 💪');
+    sendNotif('🎯 ' + obj.name, "C'est l'heure ! N'oublie pas : " + obj.name + ' 💪');
     obj.nextAt = Date.now() + obj.intervalMs;
     obj._firedCount = (obj._firedCount||0) + 1;
     scheduleObjNotif(obj);
