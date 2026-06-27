@@ -519,6 +519,146 @@
   .cal-header-dot.show { display:block; }
   @media (max-width:680px) { .cal-panel { width:100vw; } }
 
+
+  /* ===== DARK MODE ===== */
+  body.dark {
+    --peach: #5C3A2E; --lavender: #3D2E6B; --mint: #1E4A3A;
+    --yellow: #4A3C0A; --blue: #1A3550; --cream: #1A1628;
+    --coral: #C0375A; --purple: #A78BFA; --green: #34D399;
+    --text: #E8E0FF; --text-light: #9D8FCA;
+    --shadow: rgba(0,0,0,0.4); --shadow-hover: rgba(167,139,250,0.25);
+    background: linear-gradient(135deg,#12101C 0%,#1A1628 50%,#0F1E18 100%) !important;
+  }
+  body.dark header { background:rgba(20,16,36,0.92) !important; }
+  body.dark .login-card, body.dark .modal, body.dark .category,
+  body.dark .idea-card, body.dark .cal-panel, body.dark .obj-panel { background:rgba(28,22,48,0.97) !important; }
+  body.dark .mobile-tab-bar { background:rgba(20,16,36,0.97) !important; }
+  body.dark .mobile-cat-tabs { background:rgba(20,16,36,0.88) !important; }
+  body.dark .form-input { background:#1A1628; color:var(--text); }
+  body.dark .idea-card { background:#1E1830 !important; }
+  body.dark .check-item, body.dark .cal-task-item { background:#2A2040 !important; }
+  body.dark .idea-title, body.dark .category-title, body.dark .check-item-text { color:var(--text) !important; }
+  body.dark .idea-text { color:var(--text-light) !important; }
+  body.dark .fab-item { background:#2A2040; color:var(--text); }
+  body.dark .btn-ghost { border-color:#3D2E6B; color:var(--text-light); }
+  body.dark .btn-ghost:hover { background:#3D2E6B; color:var(--text); }
+  body.dark ::-webkit-scrollbar-thumb { background:#3D2E6B; }
+
+  /* Dark toggle button */
+  .dark-toggle {
+    background:none; border:1.5px solid var(--lavender); border-radius:20px;
+    padding:5px 10px; cursor:pointer; font-size:1rem; color:var(--text-light);
+    transition:all 0.2s; display:flex; align-items:center; gap:5px;
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:0.8rem;
+  }
+  .dark-toggle:hover { background:var(--lavender); color:var(--text); }
+
+  /* ===== OBJECTIVES PANEL ===== */
+  .obj-overlay {
+    position:fixed; inset:0; background:rgba(74,64,96,0.25); backdrop-filter:blur(2px);
+    z-index:149; opacity:0; pointer-events:none; transition:opacity 0.25s;
+  }
+  .obj-overlay.open { opacity:1; pointer-events:all; }
+  .obj-panel {
+    position:fixed; top:0; right:0; height:100vh; width:360px;
+    background:rgba(255,255,255,0.97); backdrop-filter:blur(16px);
+    border-left:2px solid var(--lavender); box-shadow:-6px 0 32px rgba(167,139,250,0.18);
+    z-index:150; display:flex; flex-direction:column;
+    transform:translateX(100%); transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  .obj-panel.open { transform:translateX(0); }
+  .obj-panel-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 20px 14px; border-bottom:2px solid var(--lavender); flex-shrink:0;
+  }
+  .obj-panel-title { font-family:'Nunito',sans-serif; font-weight:800; font-size:1.15rem; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .obj-close-btn {
+    background:var(--lavender); border:none; border-radius:10px; width:32px; height:32px;
+    cursor:pointer; font-size:1rem; color:var(--text); display:flex; align-items:center;
+    justify-content:center; transition:background 0.15s;
+  }
+  .obj-close-btn:hover { background:var(--purple); color:white; }
+  .obj-body { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
+  .obj-add-form {
+    background:var(--cream); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;
+    border:2px solid var(--lavender);
+  }
+  .obj-add-form input, .obj-add-form select {
+    border:1.5px solid var(--lavender); border-radius:10px; padding:8px 12px;
+    font-family:'Inter',sans-serif; font-size:0.85rem; color:var(--text);
+    background:white; outline:none; width:100%; transition:border-color 0.15s;
+  }
+  body.dark .obj-add-form input, body.dark .obj-add-form select { background:#2A2040; color:var(--text); }
+  .obj-add-form input:focus, .obj-add-form select:focus { border-color:var(--purple); }
+  .obj-add-row { display:flex; gap:8px; align-items:center; }
+  .obj-add-row input { flex:1; }
+  .obj-interval-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .obj-add-btn {
+    background:var(--purple); color:white; border:none; border-radius:10px;
+    padding:9px; cursor:pointer; font-family:'Nunito',sans-serif; font-weight:700;
+    font-size:0.85rem; width:100%; transition:background 0.15s;
+  }
+  .obj-add-btn:hover { background:#9166fa; }
+  .obj-section-title {
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:0.88rem; color:var(--text-light);
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .obj-list { display:flex; flex-direction:column; gap:8px; }
+  .obj-item {
+    background:var(--cream); border-radius:14px; padding:12px 14px;
+    border:2px solid var(--lavender); display:flex; flex-direction:column; gap:6px;
+  }
+  .obj-item-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .obj-item-name { font-family:'Nunito',sans-serif; font-weight:700; font-size:0.92rem; color:var(--text); flex:1; }
+  .obj-item-del { background:none; border:none; cursor:pointer; color:var(--text-light); font-size:0.8rem; padding:3px 6px; border-radius:6px; transition:all 0.1s; }
+  .obj-item-del:hover { color:#E05080; background:#FFE4EC; }
+  .obj-item-meta { font-size:0.78rem; color:var(--text-light); font-family:'Nunito',sans-serif; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .obj-item-tag { background:var(--lavender); border-radius:20px; padding:2px 8px; font-size:0.72rem; font-family:'Nunito',sans-serif; font-weight:700; color:var(--text); }
+  .obj-item-notif { font-size:0.72rem; color:var(--purple); }
+  .obj-empty { font-size:0.83rem; color:var(--text-light); font-family:'Nunito',sans-serif; text-align:center; padding:20px 0; }
+  .btn-obj { position:relative; }
+  .obj-header-dot { position:absolute; top:4px; right:4px; width:7px; height:7px; background:var(--coral); border-radius:50%; border:1.5px solid white; display:none; }
+  .obj-header-dot.show { display:block; }
+  @media (max-width:680px) { .obj-panel { width:100vw; } }
+
+  /* ===== MOBILE HEADER MENU ===== */
+  .hamburger {
+    display:none; flex-direction:column; gap:4px; background:none; border:none;
+    cursor:pointer; padding:8px; border-radius:10px; transition:background 0.15s;
+  }
+  .hamburger span { display:block; width:20px; height:2px; background:var(--text-light); border-radius:2px; transition:all 0.2s; }
+  .hamburger:hover { background:var(--lavender); }
+  .hamburger.open span:nth-child(1) { transform:rotate(45deg) translate(4px,4px); }
+  .hamburger.open span:nth-child(2) { opacity:0; }
+  .hamburger.open span:nth-child(3) { transform:rotate(-45deg) translate(4px,-4px); }
+  .mobile-menu {
+    display:none; position:fixed; top:56px; left:0; right:0;
+    background:rgba(255,255,255,0.98); backdrop-filter:blur(16px);
+    border-bottom:2px solid var(--lavender); z-index:99;
+    flex-direction:column; padding:8px 16px 16px; gap:6px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.08);
+  }
+  body.dark .mobile-menu { background:rgba(20,16,36,0.98); }
+  .mobile-menu.open { display:flex; }
+  .mobile-menu-item {
+    display:flex; align-items:center; gap:10px; padding:11px 14px;
+    border-radius:12px; font-family:'Nunito',sans-serif; font-weight:700;
+    font-size:0.92rem; color:var(--text); cursor:pointer; border:none;
+    background:transparent; width:100%; text-align:left; transition:background 0.15s;
+  }
+  .mobile-menu-item:hover { background:var(--lavender); }
+  .mobile-menu-divider { height:1px; background:var(--lavender); margin:4px 0; }
+  @media (max-width:680px) {
+    .hamburger { display:flex; }
+    .header-actions-desktop { display:none !important; }
+    .header-logo-right { display:flex; align-items:center; gap:8px; }
+  }
+  @media (min-width:681px) {
+    .hamburger { display:none !important; }
+    .mobile-menu { display:none !important; }
+    .header-actions-desktop { display:flex !important; }
+  }
+
 </style>
 </head>
 <body>
@@ -578,19 +718,47 @@
 <div id="appScreen">
   <header>
     <div class="logo"><span class="logo-axo">🦎</span> AxoBoard</div>
-    <div class="header-actions">
+
+    <!-- Desktop actions -->
+    <div class="header-actions header-actions-desktop" style="display:flex;gap:8px;align-items:center;">
       <div class="save-indicator" id="saveIndicator">
         <span class="save-dot" id="saveDot"></span>
         <span class="save-label" id="saveLabel">Sauvegardé</span>
       </div>
-      <button class="btn btn-ghost btn-cal" onclick="calOpen()" title="Calendrier">
+      <button class="dark-toggle" onclick="toggleDark()" id="darkToggleBtn" title="Mode sombre">🌙</button>
+      <button class="btn btn-ghost btn-cal" onclick="calOpen()" title="Calendrier" style="position:relative;">
         📅 Calendrier<span class="cal-header-dot" id="calHeaderDot"></span>
       </button>
-      <button class="btn btn-secondary" onclick="openNewCategoryModal()">🗂️ Nouvelle catégorie</button>
+      <button class="btn btn-ghost" onclick="objOpen()" title="Objectifs" style="position:relative;">
+        🎯 Objectifs<span class="obj-header-dot" id="objHeaderDot"></span>
+      </button>
+      <button class="btn btn-secondary" onclick="openNewCategoryModal()">🗂️ Catégorie</button>
       <div class="user-chip" id="userChip">🦎 <span id="userChipName"></span></div>
       <button class="btn btn-ghost btn-sm" onclick="doLogout()">Déco.</button>
     </div>
+
+    <!-- Mobile right side -->
+    <div class="header-logo-right">
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
+
+  <!-- Mobile dropdown menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="save-indicator" id="saveIndicatorMobile" style="padding:8px 14px;pointer-events:none">
+      <span class="save-dot" id="saveDotMobile"></span>
+      <span class="save-label" id="saveLabelMobile">Sauvegardé</span>
+    </div>
+    <div class="mobile-menu-divider"></div>
+    <button class="mobile-menu-item" onclick="openNewCategoryModal();closeMobileMenu()">🗂️ Nouvelle catégorie</button>
+    <button class="mobile-menu-item" onclick="calOpen();closeMobileMenu()">📅 Calendrier</button>
+    <button class="mobile-menu-item" onclick="objOpen();closeMobileMenu()">🎯 Objectifs</button>
+    <div class="mobile-menu-divider"></div>
+    <button class="mobile-menu-item" onclick="toggleDark();closeMobileMenu()" id="darkToggleMobile">🌙 Mode sombre</button>
+    <button class="mobile-menu-item" onclick="doLogout()">👋 Déconnexion</button>
+  </div>
 
   <div class="mobile-cat-tabs" id="mobileCatTabs"></div>
 
@@ -620,6 +788,8 @@
   <div class="fab-menu" id="fabMenu">
     <button class="fab-item" onclick="fabNewIdea()">✨ Nouvelle idée</button>
     <button class="fab-item" onclick="openNewCategoryModal();closeFab()">🗂️ Nouvelle catégorie</button>
+    <button class="fab-item" onclick="calOpen();closeFab()">📅 Calendrier</button>
+    <button class="fab-item" onclick="objOpen();closeFab()">🎯 Objectifs</button>
   </div>
   <button class="fab-main" id="fabMain" onclick="toggleFab()">＋</button>
 </div>
@@ -704,7 +874,7 @@ onAuthStateChanged(auth, async user => {
     const profileSnap = await getDoc(doc(db, 'profiles', user.uid));
     currentPseudo = profileSnap.exists() ? profileSnap.data().pseudo : user.email.split('@')[0];
     showApp();
-    loadBoard();
+    loadBoard().then(() => { if(typeof onAfterLogin==='function') onAfterLogin(); });
   } else {
     currentUser = null;
     showLogin();
@@ -784,15 +954,16 @@ function showLogin() {
 
 // ── Save / Load ──────────────────────────────────────────
 function setSaving(saving) {
+  // Desktop
   const dot = document.getElementById('saveDot');
   const lbl = document.getElementById('saveLabel');
-  if (saving) {
-    dot.classList.add('saving');
-    lbl.textContent = 'Sauvegarde…';
-  } else {
-    dot.classList.remove('saving');
-    lbl.textContent = 'Sauvegardé';
-  }
+  if (dot) { if (saving) dot.classList.add('saving'); else dot.classList.remove('saving'); }
+  if (lbl) lbl.textContent = saving ? 'Sauvegarde…' : 'Sauvegardé';
+  // Mobile
+  const dot2 = document.getElementById('saveDotMobile');
+  const lbl2 = document.getElementById('saveLabelMobile');
+  if (dot2) { if (saving) dot2.classList.add('saving'); else dot2.classList.remove('saving'); }
+  if (lbl2) lbl2.textContent = saving ? 'Sauvegarde…' : 'Sauvegardé';
 }
 
 function scheduleSave() {
@@ -807,7 +978,8 @@ async function saveBoard() {
   const data = serializeBoard();
   try {
     const calData = (typeof calTasks !== 'undefined' && calTasks) ? calTasks : {};
-    await setDoc(doc(db, 'boards', currentUser.uid), { data: JSON.stringify(data), calTasks: JSON.stringify(calData), updatedAt: Date.now() });
+    const objDataToSave = typeof objectives !== 'undefined' ? objectives.map(o => ({ id:o.id, name:o.name, intervalMs:o.intervalMs, nextAt:o.nextAt, val:o.val, unitLabel:o.unitLabel||'h', _firedCount:o._firedCount||0 })) : [];
+    await setDoc(doc(db, 'boards', currentUser.uid), { data: JSON.stringify(data), calTasks: JSON.stringify(calData), objectives: JSON.stringify(objDataToSave), updatedAt: Date.now() });
     setSaving(false);
   } catch(e) {
     console.error('Save error', e);
@@ -824,6 +996,23 @@ async function loadBoard() {
       const data = JSON.parse(snap.data().data);
       deserializeBoard(data);
       if (snap.data().calTasks) { calLoadFromData(snap.data().calTasks); }
+      if (snap.data().objectives) {
+        try {
+          const objRaw = JSON.parse(snap.data().objectives);
+          // Clear existing timers
+          if (typeof objectives !== 'undefined') objectives.forEach(o => clearTimeout(o._timer));
+          objectives = [];
+          objCounter = 0;
+          objRaw.forEach(o => {
+            objCounter++;
+            const obj = { ...o, id:'obj-'+objCounter };
+            while (obj.nextAt < Date.now()) obj.nextAt += obj.intervalMs;
+            objectives.push(obj);
+            if (typeof scheduleObjNotif === 'function') scheduleObjNotif(obj);
+          });
+          if (typeof renderObjList === 'function') { renderObjList(); objUpdateDot(); }
+        } catch(e) { console.error('Obj load error', e); }
+      }
     } catch(e) { console.error('Load error', e); }
   }
   isLoadingFromFirebase = false;
@@ -1467,6 +1656,216 @@ window.scheduleSave = scheduleSave;
 
 
 
+
+
+// ═══════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════
+function applyDark(dark) {
+  document.body.classList.toggle('dark', dark);
+  const btn = document.getElementById('darkToggleBtn');
+  const mob = document.getElementById('darkToggleMobile');
+  if (btn) btn.textContent = dark ? '☀️' : '🌙';
+  if (mob) mob.textContent = dark ? '☀️ Mode clair' : '🌙 Mode sombre';
+  localStorage.setItem('axo_dark', dark ? '1' : '0');
+}
+window.toggleDark = () => applyDark(!document.body.classList.contains('dark'));
+// Restore on load
+if (localStorage.getItem('axo_dark') === '1') applyDark(true);
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE MENU
+// ═══════════════════════════════════════════════════════════
+window.toggleMobileMenu = () => {
+  const menu = document.getElementById('mobileMenu');
+  const hb = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  hb.classList.toggle('open');
+};
+window.closeMobileMenu = () => {
+  document.getElementById('mobileMenu')?.classList.remove('open');
+  document.getElementById('hamburger')?.classList.remove('open');
+};
+document.addEventListener('click', e => {
+  if (!e.target.closest('#mobileMenu') && !e.target.closest('#hamburger')) closeMobileMenu();
+});
+
+// Sync mobile save indicator
+const _origSetSaving = setSaving;
+// Patch scheduleSave to also update mobile save indicator
+const origScheduleSave = window.scheduleSave;
+function patchedSetSaving(saving) {
+  const dot2 = document.getElementById('saveDotMobile');
+  const lbl2 = document.getElementById('saveLabelMobile');
+  if (dot2) { dot2.classList.toggle('saving', saving); }
+  if (lbl2) lbl2.textContent = saving ? 'Sauvegarde…' : 'Sauvegardé';
+}
+// Override setSaving to also update mobile
+const realSetSaving = setSaving;
+
+// ═══════════════════════════════════════════════════════════
+// NOTIFICATIONS (Web Push / Notification API)
+// ═══════════════════════════════════════════════════════════
+let notifPermission = 'default';
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') { notifPermission = 'granted'; return true; }
+  if (Notification.permission === 'denied') { notifPermission = 'denied'; return false; }
+  const result = await Notification.requestPermission();
+  notifPermission = result;
+  return result === 'granted';
+}
+
+function sendNotif(title, body, icon='🦎') {
+  if (Notification.permission !== 'granted') return;
+  try {
+    new Notification(title, { body, icon: '/favicon.ico', badge: '/favicon.ico', tag: 'axoboard-' + Date.now() });
+  } catch(e) { console.log('Notif error:', e); }
+}
+
+// Check today's calendar tasks at login / every morning
+function checkTodayCalTasks() {
+  const today = new Date();
+  const dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+  const tasks = calTasks[dateStr] || [];
+  const pending = tasks.filter(t => !t.done);
+  if (pending.length > 0) {
+    sendNotif('📅 AxoBoard — Tâches du jour', pending.length + ' tâche' + (pending.length>1?'s':'') + ' aujourd'hui : ' + pending.map(t=>t.text||'…').slice(0,3).join(', '));
+  }
+}
+
+// Run today check after board loads
+const origLoadBoard = window.loadBoard;
+
+// ═══════════════════════════════════════════════════════════
+// OBJECTIVES MODULE
+// ═══════════════════════════════════════════════════════════
+var objectives = [];  // [{ id, name, intervalMs, nextAt, timerId }]
+var objCounter = 0;
+
+window.objOpen  = () => { document.getElementById('objPanel').classList.add('open'); document.getElementById('objOverlay').classList.add('open'); };
+window.objClose = () => { document.getElementById('objPanel').classList.remove('open'); document.getElementById('objOverlay').classList.remove('open'); };
+
+window.objAdd = async () => {
+  const name = document.getElementById('objNameInput').value.trim();
+  const val  = parseInt(document.getElementById('objIntervalVal').value) || 1;
+  const unit = document.getElementById('objIntervalUnit').value;
+  if (!name) { document.getElementById('objNameInput').focus(); return; }
+
+  const msMap = { min: 60*1000, h: 3600*1000, d: 86400*1000 };
+  const intervalMs = val * msMap[unit];
+  const unitLabel = { min:'min', h:'h', d:'jour' }[unit];
+
+  const granted = await requestNotifPermission();
+  if (!granted) {
+    showToast('⚠️ Active les notifications dans le navigateur !');
+  }
+
+  objCounter++;
+  const obj = { id:'obj-'+objCounter, name, intervalMs, nextAt: Date.now()+intervalMs, unitLabel, val };
+  objectives.push(obj);
+  scheduleObjNotif(obj);
+  renderObjList();
+  objSave();
+  document.getElementById('objNameInput').value = '';
+  showToast('Objectif ajouté 🎯');
+  objUpdateDot();
+};
+
+function scheduleObjNotif(obj) {
+  clearTimeout(obj._timer);
+  const delay = Math.max(obj.nextAt - Date.now(), 1000);
+  obj._timer = setTimeout(() => {
+    sendNotif('🎯 ' + obj.name, 'C'est l'heure ! N'oublie pas : ' + obj.name + ' 💪');
+    obj.nextAt = Date.now() + obj.intervalMs;
+    obj._firedCount = (obj._firedCount||0) + 1;
+    scheduleObjNotif(obj);
+    renderObjList();
+    objSave();
+  }, Math.min(delay, 2147483647)); // max setTimeout
+}
+
+function renderObjList() {
+  const list = document.getElementById('objList');
+  const empty = document.getElementById('objEmpty');
+  if (!list) return;
+  // Remove old items (keep empty msg)
+  [...list.querySelectorAll('.obj-item')].forEach(el => el.remove());
+  if (objectives.length === 0) {
+    if (empty) empty.style.display = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  objectives.forEach(obj => {
+    const el = document.createElement('div'); el.className = 'obj-item';
+    const remaining = Math.max(0, obj.nextAt - Date.now());
+    const remMin = Math.round(remaining/60000);
+    const remStr = remaining < 60000 ? 'moins d'1 min' : remMin < 60 ? remMin+'min' : Math.round(remMin/60)+'h'+((remMin%60)?String(remMin%60).padStart(2,'0'):'');
+    el.innerHTML = `
+      <div class="obj-item-header">
+        <span class="obj-item-name">${obj.name}</span>
+        <button class="obj-item-del" onclick="objDelete('${obj.id}')">✕</button>
+      </div>
+      <div class="obj-item-meta">
+        <span class="obj-item-tag">⏱ tous les ${obj.val} ${obj.unitLabel}</span>
+        <span class="obj-item-notif">🔔 dans ${remStr}</span>
+        ${obj._firedCount ? '<span style="color:var(--green)">✓ '+obj._firedCount+' rappel'+(obj._firedCount>1?'s':'')+'</span>' : ''}
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+// Refresh remaining time display every 30s
+setInterval(renderObjList, 30000);
+
+window.objDelete = (id) => {
+  const idx = objectives.findIndex(o => o.id === id);
+  if (idx < 0) return;
+  clearTimeout(objectives[idx]._timer);
+  objectives.splice(idx, 1);
+  renderObjList(); objSave(); objUpdateDot();
+};
+
+function objUpdateDot() {
+  const dot = document.getElementById('objHeaderDot');
+  if (dot) dot.classList.toggle('show', objectives.length > 0);
+}
+
+function objSave() {
+  const data = objectives.map(o => ({ id:o.id, name:o.name, intervalMs:o.intervalMs, nextAt:o.nextAt, val:o.val, unitLabel:o.unitLabel, _firedCount:o._firedCount||0 }));
+  localStorage.setItem('axo_objectives', JSON.stringify(data));
+  scheduleSave();
+}
+
+function objLoad() {
+  try {
+    const raw = localStorage.getItem('axo_objectives');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    data.forEach(o => {
+      objCounter++;
+      const obj = { ...o, id:'obj-'+objCounter };
+      // If nextAt is in the past, push it forward
+      while (obj.nextAt < Date.now()) obj.nextAt += obj.intervalMs;
+      objectives.push(obj);
+      scheduleObjNotif(obj);
+    });
+    renderObjList();
+    objUpdateDot();
+  } catch(e) { console.error('Obj load error', e); }
+}
+
+// ── Ask for notif permission + check today tasks after login ──
+async function onAfterLogin() {
+  await requestNotifPermission();
+  setTimeout(checkTodayCalTasks, 3000); // give time for cal tasks to load
+}
+
+// Patch showApp to trigger post-login init
+const _origShowApp = window.showApp;
+
+
 // ═══════════════════════════════════════════════════════════
 // CALENDAR MODULE
 // ═══════════════════════════════════════════════════════════
@@ -1614,7 +2013,10 @@ window.calLoadFromData = (data) => {
 };
 
 calInit();
+objLoad();
 
+// After everything is ready, hook post-login
+const _origOnAuth = null; // already handled via onAuthStateChanged patch below
 
 </script>
 
@@ -1640,4 +2042,33 @@ calInit();
     <button class="cal-add-task-btn" id="calAddBtn" onclick="calAddTask()" disabled>＋ Ajouter une tâche</button>
   </div>
 </div>
+
+<!-- OBJECTIVES OVERLAY -->
+<div class="obj-overlay" id="objOverlay" onclick="objClose()"></div>
+<!-- OBJECTIVES PANEL -->
+<div class="obj-panel" id="objPanel">
+  <div class="obj-panel-header">
+    <div class="obj-panel-title">🎯 Objectifs</div>
+    <button class="obj-close-btn" onclick="objClose()">✕</button>
+  </div>
+  <div class="obj-body">
+    <div class="obj-add-form">
+      <input type="text" id="objNameInput" placeholder="Ex: Boire de l'eau, Faire du sport…" maxlength="60" style="margin-bottom:2px">
+      <div class="obj-interval-row">
+        <input type="number" id="objIntervalVal" placeholder="Intervalle" min="1" value="2">
+        <select id="objIntervalUnit">
+          <option value="min">Minutes</option>
+          <option value="h" selected>Heures</option>
+          <option value="d">Jours</option>
+        </select>
+      </div>
+      <button class="obj-add-btn" onclick="objAdd()">＋ Ajouter l'objectif</button>
+    </div>
+    <div class="obj-section-title" style="margin-top:4px">Mes objectifs</div>
+    <div class="obj-list" id="objList">
+      <div class="obj-empty" id="objEmpty">Aucun objectif pour l'instant 🎯</div>
+    </div>
+  </div>
+</div>
+
 </html>
