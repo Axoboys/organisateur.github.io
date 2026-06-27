@@ -1103,14 +1103,15 @@ function buildIdeaCard(ideaId, catId, ideaData) {
   // Register in memory
   ideasData[ideaId] = { catId, title: ideaData.title || '', contents: ideaData.contents || [] };
 
-  // Restore content
-  if (ideaData.contents) {
+  // Restore content — use card.querySelector (card not in DOM yet, getElementById won't work)
+  const contentEl = card.querySelector('.idea-content');
+  if (ideaData.contents && contentEl) {
     ideaData.contents.forEach(c => {
       if (c.type === 'text') {
         const ta = document.createElement('textarea');
         ta.className = 'idea-text'; ta.value = c.value; ta.rows = 2; ta.placeholder = 'Écris quelque chose…';
         ta.addEventListener('input', () => { autoResize(ta); scheduleSave(); });
-        document.getElementById('content-' + ideaId)?.appendChild(ta);
+        contentEl.appendChild(ta);
         setTimeout(() => autoResize(ta), 0);
       } else if (c.type === 'checklist') {
         const wrapper = document.createElement('div');
@@ -1119,11 +1120,10 @@ function buildIdeaCard(ideaId, catId, ideaData) {
         addBtn.className = 'add-check-btn'; addBtn.innerHTML = '＋ Ajouter un élément';
         addBtn.onclick = () => addCheckItem(wrapper, addBtn);
         c.items.forEach(item => addCheckItem(wrapper, addBtn, item.text, item.checked));
-        const cont = document.getElementById('content-' + ideaId);
-        cont?.appendChild(wrapper); cont?.appendChild(addBtn);
+        contentEl.appendChild(wrapper);
+        contentEl.appendChild(addBtn);
       } else if (c.type === 'image') {
-        const cont = document.getElementById('content-' + ideaId);
-        if (cont) insertImageEl(ideaId, c.src, cont);
+        insertImageEl(ideaId, c.src, contentEl);
       }
     });
   }
