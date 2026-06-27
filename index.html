@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AxoBoard — Mon Espace d'Idées</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --peach: #FFD6C8;
+    --lavender: #D4C5F9;
+    --mint: #C5F2E0;
+    --yellow: #FFF0C2;
+    --blue: #C2E8FF;
+    --cream: #FFF8F3;
+    --coral: #FF8FAB;
+    --purple: #A78BFA;
+    --green: #6EE7B7;
+    --text: #4A4060;
+    --text-light: #8B7FA8;
+    --white: #FFFFFF;
+    --shadow: rgba(167, 139, 250, 0.15);
+    --shadow-hover: rgba(167, 139, 250, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #FFF8F3 0%, #F5F0FF 50%, #F0FFF8 100%);
+    min-height: 100vh;
+    color: var(--text);
+  }
+
+  /* HEADER */
+  header {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--lavender);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-axo {
+    font-size: 1.8rem;
+    animation: wiggle 3s ease-in-out infinite;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 14px;
+    padding: 9px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary {
+    background: var(--purple);
+    color: white;
+    box-shadow: 0 3px 12px rgba(167,139,250,0.4);
+  }
+  .btn-primary:hover { background: #9166fa; box-shadow: 0 5px 18px rgba(167,139,250,0.5); }
+
+  .btn-secondary {
+    background: var(--peach);
+    color: var(--text);
+    box-shadow: 0 3px 10px rgba(255,214,200,0.5);
+  }
+  .btn-secondary:hover { background: #ffc4ae; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-light);
+    border: 1.5px solid var(--lavender);
+  }
+  .btn-ghost:hover { background: var(--lavender); color: var(--text); }
+
+  .btn-danger {
+    background: #FFE4EC;
+    color: #E05080;
+  }
+  .btn-danger:hover { background: #FFD0E0; }
+
+  .btn-sm { padding: 5px 12px; font-size: 0.8rem; border-radius: 10px; }
+
+  /* MAIN BOARD */
+  .board-wrapper {
+    padding: 28px 32px;
+    overflow-x: auto;
+  }
+
+  .board {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    min-height: calc(100vh - 120px);
+    padding-bottom: 40px;
+  }
+
+  /* CATEGORIES */
+  .category {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 18px;
+    width: 300px;
+    min-width: 300px;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 20px var(--shadow);
+    transition: box-shadow 0.2s;
+    position: relative;
+  }
+
+  .category:hover { box-shadow: 0 6px 28px var(--shadow-hover); }
+
+  .category.drag-over {
+    border-color: var(--purple);
+    background: rgba(212, 197, 249, 0.3);
+  }
+
+  .category-colors {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .color-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .color-dot:hover { transform: scale(1.2); }
+  .color-dot.active { border-color: var(--text); transform: scale(1.15); }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 8px;
+  }
+
+  .category-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--text);
+    border: none;
+    background: transparent;
+    outline: none;
+    cursor: text;
+    flex: 1;
+    min-width: 0;
+    padding: 3px 6px;
+    border-radius: 8px;
+  }
+  .category-title:focus { background: rgba(255,255,255,0.8); }
+  .category-title:hover { background: rgba(255,255,255,0.5); }
+
+  /* Category drag handle */
+  .cat-drag-handle {
+    cursor: grab;
+    color: var(--text-light);
+    font-size: 1rem;
+    padding: 4px 5px;
+    border-radius: 8px;
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0.4;
+    transition: opacity 0.15s, background 0.15s;
+    user-select: none;
+    letter-spacing: -1px;
+  }
+  .category:hover .cat-drag-handle { opacity: 1; }
+  .cat-drag-handle:hover { background: var(--lavender); opacity: 1; }
+  .cat-drag-handle:active { cursor: grabbing; }
+
+  .category.cat-dragging {
+    opacity: 0.35;
+    transform: rotate(1.5deg) scale(0.98);
+  }
+  .category.cat-drag-target {
+    outline: 2.5px dashed var(--purple);
+    outline-offset: 3px;
+  }
+  .cat-drop-placeholder {
+    width: 300px;
+    min-width: 300px;
+    border: 2.5px dashed var(--purple);
+    border-radius: 20px;
+    background: rgba(212,197,249,0.15);
+    flex-shrink: 0;
+  }  .category-badge {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-light);
+    background: var(--lavender);
+    padding: 2px 8px;
+    border-radius: 20px;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .category-menu { position: relative; }
+  .category-menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-light);
+    font-size: 1.1rem;
+    padding: 4px 6px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .category-menu-btn:hover { background: var(--lavender); color: var(--text); }
+
+  .category-dropdown {
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 6px;
+    display: none;
+    z-index: 50;
+    min-width: 140px;
+  }
+  .category-dropdown.open { display: block; }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    transition: background 0.15s;
+    color: var(--text);
+  }
+  .dropdown-item:hover { background: var(--cream); }
+  .dropdown-item.danger { color: #E05080; }
+  .dropdown-item.danger:hover { background: #FFE4EC; }
+
+  /* IDEAS CONTAINER */
+  .ideas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 60px;
+  }
+
+  /* IDEA CARD */
+  .idea-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    cursor: grab;
+    transition: all 0.2s;
+    border-left: 4px solid var(--lavender);
+    position: relative;
+    user-select: none;
+  }
+  .idea-card:active { cursor: grabbing; }
+  .idea-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+  .idea-card.dragging { opacity: 0.4; transform: rotate(2deg) scale(0.97); }
+
+  .idea-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .idea-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    border: none;
+    background: transparent;
+    outline: none;
+    cursor: text;
+    flex: 1;
+    resize: none;
+    line-height: 1.4;
+    min-height: 22px;
+  }
+  .idea-title:focus { background: #FAFAFA; border-radius: 6px; padding: 2px 4px; }
+
+  .idea-actions {
+    display: flex;
+    gap: 3px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+  .idea-card:hover .idea-actions { opacity: 1; }
+  .idea-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 3px 5px;
+    border-radius: 6px;
+    color: var(--text-light);
+    transition: background 0.1s;
+  }
+  .idea-action-btn:hover { background: var(--cream); color: var(--text); }
+  .idea-action-btn.del:hover { background: #FFE4EC; color: #E05080; }
+
+  /* IDEA CONTENT AREA */
+  .idea-content { display: flex; flex-direction: column; gap: 8px; }
+
+  .idea-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    border: none;
+    background: transparent;
+    outline: none;
+    resize: none;
+    line-height: 1.5;
+    width: 100%;
+    min-height: 40px;
+    cursor: text;
+    font-family: 'Inter', sans-serif;
+  }
+  .idea-text:focus { background: #FAFAFA; border-radius: 8px; padding: 6px; }
+  .idea-text::placeholder { color: #CCC5E0; font-style: italic; }
+
+  /* CHECKLIST */
+  .checklist { display: flex; flex-direction: column; gap: 4px; }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.85rem;
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 5px 8px;
+    group: true;
+  }
+  .check-item input[type="checkbox"] {
+    width: 15px; height: 15px;
+    accent-color: var(--purple);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .check-item-text {
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.84rem;
+    color: var(--text);
+    min-width: 0;
+  }
+  .check-item-text.done { text-decoration: line-through; color: var(--text-light); }
+  .check-item-del {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-light); font-size: 0.8rem; padding: 2px 4px;
+    border-radius: 4px; opacity: 0; transition: opacity 0.1s;
+  }
+  .check-item:hover .check-item-del { opacity: 1; }
+  .check-item-del:hover { color: #E05080; background: #FFE4EC; }
+
+  .add-check-btn {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    background: none;
+    border: 1.5px dashed var(--lavender);
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .add-check-btn:hover { background: var(--lavender); color: var(--text); border-style: solid; }
+
+  /* IMAGES */
+  .idea-image {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    max-height: 160px;
+    cursor: zoom-in;
+    transition: opacity 0.2s;
+  }
+  .idea-image:hover { opacity: 0.9; }
+  .img-wrapper { position: relative; }
+  .img-del {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(255,255,255,0.9); border: none;
+    border-radius: 50%; width: 24px; height: 24px;
+    cursor: pointer; font-size: 0.8rem; color: #E05080;
+    display: none; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .img-wrapper:hover .img-del { display: flex; }
+
+  /* ADD CONTENT TOOLBAR */
+  .idea-toolbar {
+    display: flex;
+    gap: 5px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .toolbar-btn {
+    font-size: 0.75rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    background: var(--cream);
+    border: none;
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .toolbar-btn:hover { background: var(--lavender); color: var(--text); }
+
+  /* ADD IDEA BUTTON in category */
+  .add-idea-btn {
+    width: 100%;
+    border: 2px dashed var(--lavender);
+    background: transparent;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text-light);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 10px;
+  }
+  .add-idea-btn:hover { background: var(--lavender); color: var(--text); border-style: solid; }
+
+  /* ADD CATEGORY COLUMN */
+  .add-category-col {
+    width: 260px;
+    min-width: 260px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 20px;
+    border: 2.5px dashed var(--lavender);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 30px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-light);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .add-category-col:hover { background: rgba(212,197,249,0.25); border-color: var(--purple); color: var(--text); }
+  .add-category-col .big-icon { font-size: 2.5rem; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(74,64,96,0.3);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: white;
+    border-radius: 22px;
+    padding: 28px;
+    width: 90%;
+    max-width: 440px;
+    box-shadow: 0 20px 60px rgba(74,64,96,0.2);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+  .modal h2 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--text); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%;
+    border: 2px solid var(--lavender);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    background: var(--cream);
+  }
+  .form-input:focus { border-color: var(--purple); }
+
+  .color-picker-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .color-choice {
+    width: 28px; height: 28px; border-radius: 50%;
+    cursor: pointer; border: 3px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .color-choice:hover { transform: scale(1.2); }
+  .color-choice.selected { border-color: var(--text); transform: scale(1.15); }
+
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    background: rgba(255,255,255,0.2); border: none;
+    color: white; font-size: 1.5rem; cursor: pointer;
+    border-radius: 50%; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* AXOLOTL DECO */
+  .axo-deco {
+    position: fixed;
+    bottom: 20px; right: 24px;
+    font-size: 2rem;
+    opacity: 0.5;
+    pointer-events: none;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* EMPTY STATE */
+  .empty-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    padding: 40px;
+    color: var(--text-light);
+  }
+  .empty-board .emoji { font-size: 4rem; margin-bottom: 16px; }
+  .empty-board h2 { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.5rem; margin-bottom: 8px; color: var(--text); }
+  .empty-board p { font-size: 0.9rem; max-width: 320px; line-height: 1.6; }
+
+  /* DRAG PLACEHOLDER */
+  .drag-placeholder {
+    border: 2px dashed var(--purple);
+    border-radius: 14px;
+    height: 60px;
+    background: rgba(212,197,249,0.2);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--lavender); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+  /* Category color accent */
+  .idea-card[data-border="peach"] { border-left-color: #FF8FAB; }
+  .idea-card[data-border="lavender"] { border-left-color: var(--purple); }
+  .idea-card[data-border="mint"] { border-left-color: var(--green); }
+  .idea-card[data-border="yellow"] { border-left-color: #F5C518; }
+  .idea-card[data-border="blue"] { border-left-color: #60B8FF; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: white;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.9rem;
+    padding: 10px 22px; border-radius: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease; z-index: 400;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== MOBILE NAV BAR (hidden on desktop) ===== */
+  .mobile-tab-bar {
+    display: none;
+  }
+
+  /* FAB (Floating Action Button) - hidden on desktop */
+  .fab {
+    display: none;
+  }
+
+  /* Mobile category tabs */
+  .mobile-cat-tabs {
+    display: none;
+  }
+
+  /* ===== RESPONSIVE : MOBILE ===== */
+  @media (max-width: 680px) {
+
+    /* Header compact */
+    header {
+      padding: 0 16px;
+      height: 56px;
+    }
+    .logo { font-size: 1.2rem; }
+    .logo-axo { font-size: 1.5rem; }
+
+    /* Hide desktop "Nouvelle catégorie" button in header */
+    .header-actions .btn-secondary { display: none; }
+
+    /* Board becomes vertical single-column */
+    .board-wrapper {
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .board {
+      flex-direction: column;
+      gap: 0;
+      min-height: calc(100vh - 56px - 64px);
+      padding-bottom: 80px;
+    }
+
+    /* Category tabs scrollable horizontal pill bar */
+    .mobile-cat-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--lavender);
+      position: sticky;
+      top: 56px;
+      z-index: 90;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mobile-cat-tabs::-webkit-scrollbar { display: none; }
+
+    .cat-tab {
+      flex-shrink: 0;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 2px solid var(--lavender);
+      background: white;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .cat-tab.active {
+      background: var(--purple);
+      color: white;
+      border-color: var(--purple);
+      box-shadow: 0 3px 10px rgba(167,139,250,0.4);
+    }
+
+    /* Category panels: only active one is shown */
+    .category {
+      width: 100% !important;
+      min-width: unset !important;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      box-shadow: none;
+      padding: 16px 16px 12px;
+      display: none;
+    }
+    .category.mobile-active {
+      display: block;
+    }
+
+    /* Larger tap targets */
+    .idea-card {
+      padding: 16px;
+      cursor: default;
+    }
+    .idea-card:hover {
+      transform: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    /* Always show delete button on mobile (no hover) */
+    .idea-actions {
+      opacity: 1;
+    }
+    .idea-action-btn {
+      padding: 6px 8px;
+      font-size: 1rem;
+    }
+
+    /* Larger checkboxes */
+    .check-item input[type="checkbox"] {
+      width: 20px; height: 20px;
+    }
+    .check-item { padding: 8px 10px; }
+    .check-item-text { font-size: 0.9rem; }
+
+    /* Toolbar buttons bigger */
+    .toolbar-btn {
+      font-size: 0.82rem;
+      padding: 7px 12px;
+    }
+
+    /* Add idea button bigger */
+    .add-idea-btn {
+      padding: 14px;
+      font-size: 0.95rem;
+      margin-top: 14px;
+    }
+
+    /* Hide desktop add-category column */
+    .add-category-col { display: none; }
+
+    /* Hide axo deco on mobile */
+    .axo-deco { display: none; }
+
+    /* FAB visible on mobile */
+    .fab {
+      display: flex;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 150;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .fab-main {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--purple);
+      color: white;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(167,139,250,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .fab-main:active { transform: scale(0.92); }
+    .fab-main.open { background: var(--coral); transform: rotate(45deg); }
+
+    .fab-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .fab-menu.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+
+    .fab-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      white-space: nowrap;
+    }
+    .fab-item:active { transform: scale(0.96); }
+
+    /* Mobile bottom nav bar */
+    .mobile-tab-bar {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 64px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-top: 2px solid var(--lavender);
+      z-index: 140;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 12px;
+    }
+
+    .tab-bar-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 12px;
+      transition: background 0.15s;
+      color: var(--text-light);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.68rem;
+    }
+    .tab-bar-btn .tb-icon { font-size: 1.3rem; }
+    .tab-bar-btn:active { background: var(--lavender); }
+
+    /* Move idea modal to bottom sheet on mobile */
+    .modal {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 100%;
+      padding: 24px 20px 32px;
+      transform: translateY(100%);
+    }
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+
+    /* Empty board full height */
+    .empty-board {
+      padding: 60px 24px;
+      min-height: calc(100vh - 180px);
+    }
+
+    /* Toast above tab bar */
+    .toast { bottom: 76px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-axo">🦎</span>
+    AxoBoard
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-secondary" onclick="openNewCategoryModal()">
+      🗂️ Nouvelle catégorie
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE CATEGORY TABS -->
+<div class="mobile-cat-tabs" id="mobileCatTabs"></div>
+
+<!-- BOARD -->
+<div class="board-wrapper">
+  <div class="board" id="board">
+    <!-- Empty state shown when no categories -->
+    <div class="empty-board" id="emptyState">
+      <div class="emoji">🦎✨</div>
+      <h2>Bienvenue sur AxoBoard !</h2>
+      <p>Crée ta première catégorie pour commencer à organiser tes idées. Les axolotls approuvent ! 🌿</p>
+      <br>
+      <button class="btn btn-primary" onclick="openNewCategoryModal()">🗂️ Créer ma première catégorie</button>
+    </div>
+  </div>
+</div>
+
+<!-- DECORATIVE AXOLOTL -->
+<div class="axo-deco">🌿🦎</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- FAB (mobile only) -->
+<div class="fab" id="fab">
+  <div class="fab-menu" id="fabMenu">
+    <button class="fab-item" onclick="fabNewIdea()">✨ Nouvelle idée</button>
+    <button class="fab-item" onclick="openNewCategoryModal(); closeFab()">🗂️ Nouvelle catégorie</button>
+  </div>
+  <button class="fab-main" id="fabMain" onclick="toggleFab()">＋</button>
+</div>
+
+<!-- MOBILE BOTTOM NAV BAR -->
+<div class="mobile-tab-bar">
+  <button class="tab-bar-btn" onclick="mobilePrevCat()">
+    <span class="tb-icon">◀</span>
+    <span>Préc.</span>
+  </button>
+  <button class="tab-bar-btn" onclick="openNewCategoryModal()">
+    <span class="tb-icon">🗂️</span>
+    <span>Catégorie</span>
+  </button>
+  <button class="tab-bar-btn" onclick="fabNewIdea()">
+    <span class="tb-icon">✨</span>
+    <span>Idée</span>
+  </button>
+  <button class="tab-bar-btn" onclick="mobileNextCat()">
+    <span class="tb-icon">▶</span>
+    <span>Suiv.</span>
+  </button>
+</div>
+
+<!-- MODAL : NOUVELLE CATÉGORIE -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal">
+    <h2>🗂️ Nouvelle catégorie</h2>
+    <div class="form-group">
+      <label class="form-label">Nom de la catégorie</label>
+      <input class="form-input" id="catNameInput" type="text" placeholder="Ex : Projets, Idées Minecraft…" maxlength="40">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Couleur d'accent</label>
+      <div class="color-picker-row" id="catColorPicker">
+        <div class="color-choice selected" style="background:#D4C5F9" data-color="lavender" onclick="selectCatColor(this)"></div>
+        <div class="color-choice" style="background:#FFD6C8" data-color="peach" onclick="selectCatColor(this)"></div>
+        <div class="color-choice" style="background:#C5F2E0" data-color="mint" onclick="selectCatColor(this)"></div>
+        <div class="color-choice" style="background:#FFF0C2" data-color="yellow" onclick="selectCatColor(this)"></div>
+        <div class="color-choice" style="background:#C2E8FF" data-color="blue" onclick="selectCatColor(this)"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeCatModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="createCategory()">Créer 🦎</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = {
+  lavender: { bg: '#F5F0FF', border: '#D4C5F9', accent: '#A78BFA', label: 'Lavande' },
+  peach:    { bg: '#FFF5F2', border: '#FFD6C8', accent: '#FF8FAB', label: 'Pêche' },
+  mint:     { bg: '#F0FFF8', border: '#C5F2E0', accent: '#6EE7B7', label: 'Menthe' },
+  yellow:   { bg: '#FFFBF0', border: '#FFF0C2', accent: '#F5C518', label: 'Soleil' },
+  blue:     { bg: '#F0F8FF', border: '#C2E8FF', accent: '#60B8FF', label: 'Ciel' },
+};
+
+let selectedCatColor = 'lavender';
+let draggedCard = null;
+let draggedFromList = null;
+let categories = {};
+let catCounter = 0;
+let ideaCounter = 0;
+
+/* ---- MODAL CATÉGORIE ---- */
+function openNewCategoryModal() {
+  document.getElementById('catModal').classList.add('open');
+  document.getElementById('catNameInput').value = '';
+  setTimeout(() => document.getElementById('catNameInput').focus(), 100);
+}
+function closeCatModal() {
+  document.getElementById('catModal').classList.remove('open');
+}
+function selectCatColor(el) {
+  document.querySelectorAll('#catColorPicker .color-choice').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCatColor = el.dataset.color;
+}
+
+document.getElementById('catNameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') createCategory();
+  if (e.key === 'Escape') closeCatModal();
+});
+
+function createCategory(nameOverride = null, colorOverride = null) {
+  const name = nameOverride || document.getElementById('catNameInput').value.trim();
+  const color = colorOverride || selectedCatColor;
+  if (!name) { document.getElementById('catNameInput').focus(); return; }
+
+  catCounter++;
+  const id = 'cat-' + catCounter;
+  categories[id] = { name, color, ideas: [] };
+
+  renderCategory(id, name, color);
+  closeCatModal();
+  showToast('Catégorie créée ! 🦎');
+}
+
+function renderCategory(id, name, color) {
+  document.getElementById('emptyState')?.remove();
+
+  const col = COLORS[color];
+  const div = document.createElement('div');
+  div.className = 'category';
+  div.id = id;
+  div.draggable = false;
+  div.style.background = col.bg;
+  div.style.borderColor = col.border;
+  div.dataset.color = color;
+  div.innerHTML = `
+    <div class="category-colors">
+      ${Object.entries(COLORS).map(([k,v]) =>
+        `<div class="color-dot ${k===color?'active':''}" style="background:${v.border}" title="${v.label}"
+          onclick="changeCatColor('${id}','${k}',this)"></div>`
+      ).join('')}
+    </div>
+    <div class="category-header">
+      <span class="cat-drag-handle" title="Déplacer la catégorie">⠿⠿</span>
+      <input class="category-title" value="${name}" placeholder="Nom…"
+        oninput="categories['${id}'].name = this.value" />
+      <span class="category-badge" id="badge-${id}">0</span>
+      <div class="category-menu">
+        <button class="category-menu-btn" onclick="toggleMenu('${id}')">⋯</button>
+        <div class="category-dropdown" id="menu-${id}">
+          <div class="dropdown-item" onclick="addIdeaToCategory('${id}')">✨ Nouvelle idée</div>
+          <div class="dropdown-item danger" onclick="deleteCategory('${id}')">🗑️ Supprimer</div>
+        </div>
+      </div>
+    </div>
+    <div class="ideas-list" id="list-${id}"
+      ondragover="onDragOver(event, '${id}')"
+      ondragleave="onDragLeave(event)"
+      ondrop="onDrop(event, '${id}')">
+    </div>
+    <button class="add-idea-btn" onclick="addIdeaToCategory('${id}')">
+      ✨ Ajouter une idée
+    </button>
+  `;
+
+  // Insert before add-category placeholder if exists
+  const addCol = document.getElementById('addCategoryCol');
+  if (addCol) {
+    document.getElementById('board').insertBefore(div, addCol);
+  } else {
+    document.getElementById('board').appendChild(div);
+    ensureAddCategoryButton();
+  }
+  updateBadge(id);
+
+  // Attach desktop drag events via the handle
+  const handle = div.querySelector('.cat-drag-handle');
+  handle.addEventListener('mousedown', () => { div.draggable = true; });
+  div.addEventListener('dragstart', e => onCatDragStart(e, id));
+  div.addEventListener('dragend', onCatDragEnd);
+  // Board drag-over/drop handled via board-level listener (see below)
+  initCatTouchDrag(div, id);
+}
+
+function ensureAddCategoryButton() {
+  if (!document.getElementById('addCategoryCol')) {
+    const addBtn = document.createElement('div');
+    addBtn.className = 'add-category-col';
+    addBtn.id = 'addCategoryCol';
+    addBtn.onclick = openNewCategoryModal;
+    addBtn.innerHTML = `<div class="big-icon">🗂️</div><span>Nouvelle catégorie</span>`;
+    document.getElementById('board').appendChild(addBtn);
+  }
+}
+
+function changeCatColor(id, color, dotEl) {
+  const col = COLORS[color];
+  const cat = document.getElementById(id);
+  cat.style.background = col.bg;
+  cat.style.borderColor = col.border;
+  cat.dataset.color = color;
+  categories[id].color = color;
+  cat.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  dotEl.classList.add('active');
+  // Update idea card border colors
+  cat.querySelectorAll('.idea-card').forEach(card => {
+    card.style.borderLeftColor = col.accent;
+  });
+}
+
+function toggleMenu(id) {
+  const menu = document.getElementById('menu-' + id);
+  document.querySelectorAll('.category-dropdown.open').forEach(m => { if (m !== menu) m.classList.remove('open'); });
+  menu.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.category-menu')) {
+    document.querySelectorAll('.category-dropdown.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+function deleteCategory(id) {
+  if (!confirm('Supprimer cette catégorie et toutes ses idées ?')) return;
+  document.getElementById(id)?.remove();
+  delete categories[id];
+  if (Object.keys(categories).length === 0) {
+    document.getElementById('addCategoryCol')?.remove();
+    const board = document.getElementById('board');
+    const empty = document.createElement('div');
+    empty.className = 'empty-board';
+    empty.id = 'emptyState';
+    empty.innerHTML = `
+      <div class="emoji">🦎✨</div>
+      <h2>Bienvenue sur AxoBoard !</h2>
+      <p>Crée ta première catégorie pour commencer à organiser tes idées. Les axolotls approuvent ! 🌿</p>
+      <br>
+      <button class="btn btn-primary" onclick="openNewCategoryModal()">🗂️ Créer ma première catégorie</button>
+    `;
+    board.appendChild(empty);
+  }
+  showToast('Catégorie supprimée 🗑️');
+}
+
+/* ---- IDÉES ---- */
+function addIdeaToCategory(catId) {
+  ideaCounter++;
+  const ideaId = 'idea-' + ideaCounter;
+  const catColor = COLORS[categories[catId]?.color || 'lavender'].accent;
+
+  const card = document.createElement('div');
+  card.className = 'idea-card';
+  card.id = ideaId;
+  card.dataset.catId = catId;
+  card.draggable = true;
+  card.style.borderLeftColor = catColor;
+  card.innerHTML = `
+    <div class="idea-header">
+      <textarea class="idea-title" rows="1" placeholder="Titre de l'idée…"
+        oninput="autoResize(this)"></textarea>
+      <div class="idea-actions">
+        <button class="idea-action-btn del" title="Supprimer" onclick="deleteIdea('${ideaId}','${catId}')">🗑️</button>
+      </div>
+    </div>
+    <div class="idea-content" id="content-${ideaId}"></div>
+    <div class="idea-toolbar" id="toolbar-${ideaId}">
+      <button class="toolbar-btn" onclick="addText('${ideaId}')">📝 Texte</button>
+      <button class="toolbar-btn" onclick="addChecklist('${ideaId}')">☑️ Liste</button>
+      <button class="toolbar-btn" onclick="addImageInput('${ideaId}')">🖼️ Image</button>
+    </div>
+  `;
+
+  card.addEventListener('dragstart', e => onDragStart(e, ideaId, catId));
+  card.addEventListener('dragend', onDragEnd);
+
+  document.getElementById('list-' + catId).appendChild(card);
+  updateBadge(catId);
+
+  // Auto-focus title
+  setTimeout(() => card.querySelector('.idea-title').focus(), 50);
+  showToast('Idée créée ✨');
+}
+
+function deleteIdea(ideaId, catId) {
+  document.getElementById(ideaId)?.remove();
+  updateBadge(catId);
+  showToast('Idée supprimée 🗑️');
+}
+
+function updateBadge(catId) {
+  const list = document.getElementById('list-' + catId);
+  const badge = document.getElementById('badge-' + catId);
+  if (list && badge) badge.textContent = list.querySelectorAll('.idea-card').length;
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+/* ---- ADD CONTENT ---- */
+function addText(ideaId) {
+  const content = document.getElementById('content-' + ideaId);
+  const ta = document.createElement('textarea');
+  ta.className = 'idea-text';
+  ta.placeholder = 'Écris quelque chose…';
+  ta.rows = 2;
+  ta.addEventListener('input', () => autoResize(ta));
+  content.appendChild(ta);
+  setTimeout(() => ta.focus(), 50);
+}
+
+function addChecklist(ideaId) {
+  const content = document.getElementById('content-' + ideaId);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'checklist';
+  wrapper.id = 'cl-' + ideaId + '-' + Date.now();
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-check-btn';
+  addBtn.innerHTML = '＋ Ajouter un élément';
+  addBtn.onclick = () => addCheckItem(wrapper, addBtn);
+
+  content.appendChild(wrapper);
+  content.appendChild(addBtn);
+  addCheckItem(wrapper, addBtn);
+}
+
+function addCheckItem(wrapper, addBtn) {
+  const item = document.createElement('div');
+  item.className = 'check-item';
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  const txt = document.createElement('input');
+  txt.type = 'text';
+  txt.className = 'check-item-text';
+  txt.placeholder = 'Élément de liste…';
+  cb.addEventListener('change', () => txt.classList.toggle('done', cb.checked));
+  txt.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addCheckItem(wrapper, addBtn); }
+    if (e.key === 'Backspace' && txt.value === '' && wrapper.children.length > 0) {
+      item.remove();
+    }
+  });
+  const del = document.createElement('button');
+  del.className = 'check-item-del';
+  del.textContent = '✕';
+  del.onclick = () => item.remove();
+  item.append(cb, txt, del);
+  wrapper.appendChild(item);
+  setTimeout(() => txt.focus(), 30);
+}
+
+function addImageInput(ideaId) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.display = 'none';
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => insertImage(ideaId, e.target.result);
+    reader.readAsDataURL(file);
+  });
+  document.body.appendChild(input);
+  input.click();
+  input.remove();
+}
+
+function insertImage(ideaId, src) {
+  const content = document.getElementById('content-' + ideaId);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'img-wrapper';
+  const img = document.createElement('img');
+  img.className = 'idea-image';
+  img.src = src;
+  img.onclick = () => openLightbox(src);
+  const del = document.createElement('button');
+  del.className = 'img-del';
+  del.innerHTML = '✕';
+  del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
+  wrapper.append(img, del);
+  content.appendChild(wrapper);
+}
+
+/* ---- LIGHTBOX ---- */
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+/* ---- DRAG & DROP ---- */
+function onDragStart(e, ideaId, catId) {
+  draggedCard = document.getElementById(ideaId);
+  draggedFromList = document.getElementById('list-' + catId);
+  draggedCard.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', ideaId + '|' + catId);
+}
+function onDragEnd() {
+  if (draggedCard) draggedCard.classList.remove('dragging');
+  document.querySelectorAll('.drag-placeholder').forEach(p => p.remove());
+  document.querySelectorAll('.category.drag-over').forEach(c => c.classList.remove('drag-over'));
+  draggedCard = null;
+  draggedFromList = null;
+}
+function onDragOver(e, catId) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const cat = document.getElementById(catId);
+  cat.classList.add('drag-over');
+  const list = document.getElementById('list-' + catId);
+  const afterEl = getDragAfterEl(list, e.clientY);
+  document.querySelectorAll('.drag-placeholder').forEach(p => p.remove());
+  const placeholder = document.createElement('div');
+  placeholder.className = 'drag-placeholder';
+  if (!afterEl) list.appendChild(placeholder);
+  else list.insertBefore(placeholder, afterEl);
+}
+function onDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList?.remove?.('drag-over');
+  }
+}
+function onDrop(e, catId) {
+  e.preventDefault();
+  document.querySelectorAll('.drag-placeholder').forEach(p => p.remove());
+  document.getElementById(catId).classList.remove('drag-over');
+  if (!draggedCard) return;
+
+  const list = document.getElementById('list-' + catId);
+  const afterEl = getDragAfterEl(list, e.clientY);
+  if (!afterEl) list.appendChild(draggedCard);
+  else list.insertBefore(draggedCard, afterEl);
+
+  // Update card color to match new category
+  const newColor = COLORS[categories[catId]?.color || 'lavender'].accent;
+  draggedCard.style.borderLeftColor = newColor;
+  draggedCard.dataset.catId = catId;
+
+  // Update badges
+  if (draggedFromList) {
+    const oldCatId = draggedFromList.id.replace('list-', '');
+    updateBadge(oldCatId);
+  }
+  updateBadge(catId);
+}
+function getDragAfterEl(container, y) {
+  const cards = [...container.querySelectorAll('.idea-card:not(.dragging)')];
+  return cards.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+/* ---- TOAST ---- */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ---- CATEGORY DRAG & DROP (desktop) ---- */
+let draggedCat = null;
+
+function onCatDragStart(e, id) {
+  // Only allow drag if it started from the handle
+  draggedCat = document.getElementById(id);
+  draggedCat.classList.add('cat-dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', 'cat:' + id);
+}
+
+function onCatDragEnd() {
+  if (draggedCat) {
+    draggedCat.classList.remove('cat-dragging');
+    draggedCat.draggable = false;
+  }
+  document.querySelectorAll('.cat-drop-placeholder').forEach(p => p.remove());
+  document.querySelectorAll('.category.cat-drag-target').forEach(c => c.classList.remove('cat-drag-target'));
+  draggedCat = null;
+  // After reorder, update mobile tabs
+  updateMobileTabs();
+}
+
+// Board-level dragover & drop for categories
+document.getElementById('board').addEventListener('dragover', e => {
+  if (!draggedCat) return;
+  e.preventDefault();
+  const board = document.getElementById('board');
+  const afterEl = getCatAfterEl(board, e.clientX);
+  document.querySelectorAll('.cat-drop-placeholder').forEach(p => p.remove());
+  const ph = document.createElement('div');
+  ph.className = 'cat-drop-placeholder';
+  if (!afterEl) {
+    // Insert before the addCategoryCol
+    const addCol = document.getElementById('addCategoryCol');
+    board.insertBefore(ph, addCol || null);
+  } else {
+    board.insertBefore(ph, afterEl);
+  }
+});
+
+document.getElementById('board').addEventListener('drop', e => {
+  if (!draggedCat) return;
+  e.preventDefault();
+  document.querySelectorAll('.cat-drop-placeholder').forEach(p => p.remove());
+  const board = document.getElementById('board');
+  const afterEl = getCatAfterEl(board, e.clientX);
+  const addCol = document.getElementById('addCategoryCol');
+  if (!afterEl) {
+    board.insertBefore(draggedCat, addCol || null);
+  } else {
+    board.insertBefore(draggedCat, afterEl);
+  }
+  updateMobileTabs();
+});
+
+function getCatAfterEl(board, x) {
+  const cols = [...board.querySelectorAll('.category:not(.cat-dragging)')];
+  return cols.reduce((closest, col) => {
+    const box = col.getBoundingClientRect();
+    const offset = x - box.left - box.width / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: col };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+/* ---- CATEGORY TOUCH DRAG (mobile) ---- */
+function initCatTouchDrag(catEl, id) {
+  const handle = catEl.querySelector('.cat-drag-handle');
+  let touchCatClone = null;
+  let catTouchTimer = null;
+  let catTouchActive = false;
+  let touchStartX = 0, touchStartY = 0;
+
+  handle.addEventListener('touchstart', e => {
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+
+    catTouchTimer = setTimeout(() => {
+      catTouchActive = true;
+      catEl.classList.add('cat-dragging');
+      const rect = catEl.getBoundingClientRect();
+      touchCatClone = catEl.cloneNode(true);
+      touchCatClone.style.cssText = `
+        position:fixed; width:${rect.width}px; opacity:0.82;
+        pointer-events:none; z-index:500; border-radius:20px;
+        transform:rotate(2deg) scale(0.97); box-shadow:0 12px 40px rgba(0,0,0,0.18);
+        left:${rect.left}px; top:${rect.top}px;
+      `;
+      document.body.appendChild(touchCatClone);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 350);
+  }, { passive: true });
+
+  handle.addEventListener('touchmove', e => {
+    clearTimeout(catTouchTimer);
+    if (!catTouchActive) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+    if (touchCatClone) {
+      const rect = catEl.getBoundingClientRect();
+      touchCatClone.style.left = (rect.left + dx) + 'px';
+      touchCatClone.style.top = (rect.top + dy) + 'px';
+    }
+    // Find target position
+    const board = document.getElementById('board');
+    const afterEl = getCatAfterEl(board, touch.clientX);
+    document.querySelectorAll('.cat-drop-placeholder').forEach(p => p.remove());
+    const ph = document.createElement('div');
+    ph.className = 'cat-drop-placeholder';
+    ph.style.height = catEl.getBoundingClientRect().height + 'px';
+    const addCol = document.getElementById('addCategoryCol');
+    if (!afterEl) board.insertBefore(ph, addCol || null);
+    else board.insertBefore(ph, afterEl);
+  }, { passive: false });
+
+  handle.addEventListener('touchend', e => {
+    clearTimeout(catTouchTimer);
+    document.querySelectorAll('.cat-drop-placeholder').forEach(p => p.remove());
+    touchCatClone?.remove(); touchCatClone = null;
+    catEl.classList.remove('cat-dragging');
+    if (!catTouchActive) { catTouchActive = false; return; }
+    catTouchActive = false;
+
+    const touch = e.changedTouches[0];
+    const board = document.getElementById('board');
+    const afterEl = getCatAfterEl(board, touch.clientX);
+    const addCol = document.getElementById('addCategoryCol');
+    if (!afterEl) board.insertBefore(catEl, addCol || null);
+    else board.insertBefore(catEl, afterEl);
+    updateMobileTabs();
+    showToast('Catégorie déplacée 🗂️');
+  }, { passive: true });
+
+  handle.addEventListener('touchcancel', () => {
+    clearTimeout(catTouchTimer);
+    document.querySelectorAll('.cat-drop-placeholder').forEach(p => p.remove());
+    touchCatClone?.remove(); touchCatClone = null;
+    catEl.classList.remove('cat-dragging');
+    catTouchActive = false;
+  });
+}
+
+/* ---- KEYBOARD SHORTCUT ---- */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    openNewCategoryModal();
+  }
+  if (e.key === 'Escape') {
+    closeCatModal();
+    closeLightbox();
+    closeFab();
+  }
+});
+
+/* ---- MOBILE : TABS & PANEL SWITCHING ---- */
+let activeMobileCatId = null;
+
+function updateMobileTabs() {
+  const tabBar = document.getElementById('mobileCatTabs');
+  tabBar.innerHTML = '';
+  const catIds = Object.keys(categories);
+  catIds.forEach(id => {
+    const tab = document.createElement('button');
+    tab.className = 'cat-tab' + (id === activeMobileCatId ? ' active' : '');
+    // Color the active tab with the category's own accent
+    if (id === activeMobileCatId) {
+      const col = COLORS[categories[id].color || 'lavender'];
+      tab.style.background = col.accent;
+      tab.style.borderColor = col.accent;
+    }
+    tab.textContent = categories[id].name || 'Catégorie';
+    tab.onclick = () => switchMobileCat(id);
+    tabBar.appendChild(tab);
+  });
+  // Show/hide panels
+  document.querySelectorAll('.category').forEach(el => {
+    el.classList.toggle('mobile-active', el.id === activeMobileCatId);
+  });
+}
+
+function switchMobileCat(id) {
+  activeMobileCatId = id;
+  updateMobileTabs();
+  // Scroll tab into view
+  const tabs = document.getElementById('mobileCatTabs');
+  const activeTab = tabs.querySelector('.cat-tab.active');
+  if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+}
+
+function mobilePrevCat() {
+  const ids = Object.keys(categories);
+  if (!ids.length) return;
+  const idx = ids.indexOf(activeMobileCatId);
+  const prev = ids[(idx - 1 + ids.length) % ids.length];
+  switchMobileCat(prev);
+}
+
+function mobileNextCat() {
+  const ids = Object.keys(categories);
+  if (!ids.length) return;
+  const idx = ids.indexOf(activeMobileCatId);
+  const next = ids[(idx + 1) % ids.length];
+  switchMobileCat(next);
+}
+
+/* ---- FAB ---- */
+function toggleFab() {
+  const menu = document.getElementById('fabMenu');
+  const btn = document.getElementById('fabMain');
+  const open = menu.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+function closeFab() {
+  document.getElementById('fabMenu').classList.remove('open');
+  document.getElementById('fabMain').classList.remove('open');
+}
+function fabNewIdea() {
+  closeFab();
+  if (activeMobileCatId && categories[activeMobileCatId]) {
+    addIdeaToCategory(activeMobileCatId);
+  } else {
+    const ids = Object.keys(categories);
+    if (ids.length) addIdeaToCategory(ids[0]);
+    else { showToast('Crée d\'abord une catégorie 🦎'); openNewCategoryModal(); }
+  }
+}
+// Close fab when tapping outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.fab')) closeFab();
+});
+
+/* ---- PATCH renderCategory to update mobile tabs ---- */
+const _origRenderCategory = renderCategory;
+renderCategory = function(id, name, color) {
+  _origRenderCategory(id, name, color);
+  if (!activeMobileCatId) activeMobileCatId = id;
+  updateMobileTabs();
+  // On mobile, show the newly created category
+  if (window.innerWidth <= 680) switchMobileCat(id);
+};
+
+/* ---- PATCH deleteCategory to fix mobile tabs ---- */
+const _origDeleteCategory = deleteCategory;
+deleteCategory = function(id) {
+  const ids = Object.keys(categories);
+  const idx = ids.indexOf(id);
+  // Find next category to show after delete
+  const nextId = ids[idx + 1] || ids[idx - 1] || null;
+  _origDeleteCategory(id);
+  activeMobileCatId = nextId;
+  updateMobileTabs();
+};
+
+/* ---- TOUCH DRAG & DROP for mobile ---- */
+let touchDragCard = null;
+let touchDragFromCat = null;
+let touchClone = null;
+let touchOffsetX = 0, touchOffsetY = 0;
+
+function initTouchDrag(card, catId) {
+  card.addEventListener('touchstart', e => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+    const touch = e.touches[0];
+    const rect = card.getBoundingClientRect();
+    touchOffsetX = touch.clientX - rect.left;
+    touchOffsetY = touch.clientY - rect.top;
+
+    // Start drag after 300ms hold
+    card._touchTimer = setTimeout(() => {
+      touchDragCard = card;
+      touchDragFromCat = catId;
+      card.classList.add('dragging');
+      // Clone for visual feedback
+      touchClone = card.cloneNode(true);
+      touchClone.style.cssText = `
+        position:fixed; width:${rect.width}px; opacity:0.85;
+        pointer-events:none; z-index:500; border-radius:14px;
+        transform:rotate(2deg) scale(0.97); box-shadow:0 10px 30px rgba(0,0,0,0.2);
+        left:${touch.clientX - touchOffsetX}px; top:${touch.clientY - touchOffsetY}px;
+      `;
+      document.body.appendChild(touchClone);
+      if (navigator.vibrate) navigator.vibrate(40);
+    }, 300);
+  }, { passive: true });
+
+  card.addEventListener('touchmove', e => {
+    clearTimeout(card._touchTimer);
+    if (!touchDragCard || touchDragCard !== card) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (touchClone) {
+      touchClone.style.left = (touch.clientX - touchOffsetX) + 'px';
+      touchClone.style.top = (touch.clientY - touchOffsetY) + 'px';
+    }
+    // Highlight target category
+    document.querySelectorAll('.category').forEach(c => c.classList.remove('drag-over'));
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetCat = el?.closest('.category');
+    if (targetCat) targetCat.classList.add('drag-over');
+  }, { passive: false });
+
+  card.addEventListener('touchend', e => {
+    clearTimeout(card._touchTimer);
+    if (!touchDragCard || touchDragCard !== card) return;
+    const touch = e.changedTouches[0];
+    touchClone?.remove(); touchClone = null;
+    card.classList.remove('dragging');
+    document.querySelectorAll('.category.drag-over').forEach(c => c.classList.remove('drag-over'));
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetCat = el?.closest('.category');
+    if (targetCat && targetCat.id !== touchDragFromCat) {
+      const newCatId = targetCat.id;
+      const list = document.getElementById('list-' + newCatId);
+      list.appendChild(card);
+      const newColor = COLORS[categories[newCatId]?.color || 'lavender'].accent;
+      card.style.borderLeftColor = newColor;
+      card.dataset.catId = newCatId;
+      updateBadge(touchDragFromCat);
+      updateBadge(newCatId);
+      showToast('Idée déplacée ✨');
+      // Switch to the target category on mobile
+      if (window.innerWidth <= 680) switchMobileCat(newCatId);
+    }
+    touchDragCard = null;
+    touchDragFromCat = null;
+  }, { passive: true });
+
+  card.addEventListener('touchcancel', () => {
+    clearTimeout(card._touchTimer);
+    touchClone?.remove(); touchClone = null;
+    card.classList.remove('dragging');
+    touchDragCard = null;
+  });
+}
+
+/* ---- PATCH addIdeaToCategory to attach touch drag ---- */
+const _origAddIdea = addIdeaToCategory;
+addIdeaToCategory = function(catId) {
+  _origAddIdea(catId);
+  // The last card added is the new one
+  const list = document.getElementById('list-' + catId);
+  const cards = list.querySelectorAll('.idea-card');
+  const newCard = cards[cards.length - 1];
+  if (newCard) initTouchDrag(newCard, catId);
+};
+
+/* ---- SWIPE between categories on mobile ---- */
+let swipeStartX = 0;
+document.getElementById('board').addEventListener('touchstart', e => {
+  swipeStartX = e.touches[0].clientX;
+}, { passive: true });
+document.getElementById('board').addEventListener('touchend', e => {
+  if (window.innerWidth > 680) return;
+  if (touchDragCard) return; // Don't swipe while dragging
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  if (Math.abs(dx) > 80) {
+    if (dx < 0) mobileNextCat();
+    else mobilePrevCat();
+  }
+}, { passive: true });
+
+/* ---- INIT : démo ---- */
+window.addEventListener('DOMContentLoaded', () => {
+  ensureAddCategoryButton();
+
+  // Pre-fill a welcome example
+  createCategory('🌿 Idées Minecraft', 'mint');
+  const catId = 'cat-1';
+  addIdeaToCategory(catId);
+  const card = document.querySelector('#idea-1 .idea-title');
+  if (card) { card.value = 'Nouvelle map aventure'; autoResize(card); }
+  addText('idea-1');
+  const ta = document.querySelector('#content-idea-1 .idea-text');
+  if (ta) { ta.value = 'Une map dans une forêt mystérieuse avec des puzzles…'; autoResize(ta); }
+  addChecklist('idea-1');
+  const checks = document.querySelectorAll('#content-idea-1 .check-item-text');
+  if (checks[0]) checks[0].value = 'Construire le spawn';
+  if (checks[1]) checks[1].value = 'Ajouter des ennemis custom';
+
+  createCategory('🦎 Projets créatifs', 'lavender');
+  addIdeaToCategory('cat-2');
+  const t2 = document.querySelector('#idea-2 .idea-title');
+  if (t2) { t2.value = 'La Boucle — Chapitre 3'; autoResize(t2); }
+  addText('idea-2');
+  const ta2 = document.querySelector('#content-idea-2 .idea-text');
+  if (ta2) { ta2.value = 'Continuer le fil narratif de Soren…'; autoResize(ta2); }
+
+  // Attach touch drag to all existing cards
+  document.querySelectorAll('.idea-card').forEach(card => {
+    const catId = card.dataset.catId;
+    if (catId) initTouchDrag(card, catId);
+  });
+
+  // Show first category on mobile
+  if (window.innerWidth <= 680) {
+    const firstId = Object.keys(categories)[0];
+    if (firstId) switchMobileCat(firstId);
+  }
+  updateMobileTabs();
+});
+</script>
+</body>
+</html>
