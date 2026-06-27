@@ -1690,18 +1690,7 @@ document.addEventListener('click', e => {
   if (!e.target.closest('#mobileMenu') && !e.target.closest('#hamburger')) closeMobileMenu();
 });
 
-// Sync mobile save indicator
-const _origSetSaving = setSaving;
-// Patch scheduleSave to also update mobile save indicator
-const origScheduleSave = window.scheduleSave;
-function patchedSetSaving(saving) {
-  const dot2 = document.getElementById('saveDotMobile');
-  const lbl2 = document.getElementById('saveLabelMobile');
-  if (dot2) { dot2.classList.toggle('saving', saving); }
-  if (lbl2) lbl2.textContent = saving ? 'Sauvegarde…' : 'Sauvegardé';
-}
-// Override setSaving to also update mobile
-const realSetSaving = setSaving;
+// (mobile save indicator handled in setSaving directly)
 
 // ═══════════════════════════════════════════════════════════
 // NOTIFICATIONS (Web Push / Notification API)
