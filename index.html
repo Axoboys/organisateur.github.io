@@ -2105,6 +2105,15 @@ calInit();
     }
   });
 
+  // Show hint briefly on first load
+  setTimeout(() => {
+    const h = document.getElementById('blob-hint');
+    h.textContent = '🎮 tape B L O B pour invoquer le blob';
+    h.classList.add('show');
+    setTimeout(() => h.classList.remove('show'), 4000);
+  }, 2000);
+})();
+
 objLoad();
 
 // After everything is ready, hook post-login
