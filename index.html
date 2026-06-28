@@ -688,7 +688,7 @@
     z-index:99999; pointer-events:none;
     transition:none;
   }
-  #superman-blob.flying { animation:supermanFly 2.6s cubic-bezier(.4,0,.2,1) forwards; }
+  /* .flying handled by JS */
   #superman-speech-bubble {
     position:absolute; top:-62px; left:50%;
     transform:translateX(-50%) scale(0);
@@ -706,12 +706,7 @@
   }
   #superman-speech-bubble.show { transform:translateX(-50%) scale(1); }
 
-  @keyframes supermanFly {
-    0%   { left:-160px; transform:translateY(-50%) rotate(-8deg) scaleX(-1); }
-    35%  { left:calc(50vw - 55px); transform:translateY(-50%) rotate(0deg) scaleX(-1); }
-    65%  { left:calc(50vw - 55px); transform:translateY(-50%) rotate(0deg) scaleX(-1); }
-    100% { left:calc(100vw + 160px); transform:translateY(-50%) rotate(8deg) scaleX(-1); }
-  }
+  /* supermanFly handled by JS */
   @keyframes supermanBodyFloat { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
   @keyframes supermanCapeWave { 0%,100%{d:path('M70 40 Q90 55 72 70 Q88 65 75 80 L110 55 Z')} 50%{d:path('M70 40 Q95 52 75 68 Q92 60 78 78 L110 55 Z')} }
   @keyframes supermanGlow { 0%,100%{opacity:0.5} 50%{opacity:1} }
@@ -2078,25 +2073,73 @@ calInit();
 
     const el = document.getElementById('superman-blob');
     const bubble = document.getElementById('superman-speech-bubble');
+    bubble.classList.remove('show');
 
-    // Reset position
-    el.style.animation = 'none';
-    el.style.left = '-160px';
+    const W = window.innerWidth;
+    const blobW = 120;
+    const centerX = Math.floor(W / 2 - blobW / 2);
+    const startX = -blobW - 20;
+    const endX = W + 20;
+    const duration = 2800; // ms total
+    const pauseStart = 0.35; // 35% = arrive at center
+    const pauseEnd = 0.65;   // 65% = leave center
+
+    let startTime = null;
+
+    function ease(t) {
+      // ease in-out cubic
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+    }
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function frame(ts) {
+      if (!startTime) startTime = ts;
+      const elapsed = ts - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      let x, rotate;
+
+      if (progress < pauseStart) {
+        // Phase 1: fly in from left to center
+        const t = ease(progress / pauseStart);
+        x = lerp(startX, centerX, t);
+        rotate = lerp(-10, 0, t);
+        el.style.transform = 'translateY(-50%) rotate(' + rotate + 'deg) scaleX(-1)';
+      } else if (progress < pauseEnd) {
+        // Phase 2: hold at center, show bubble
+        x = centerX;
+        el.style.transform = 'translateY(-50%) rotate(0deg) scaleX(-1)';
+        if (!bubble.classList.contains('show')) bubble.classList.add('show');
+      } else {
+        // Phase 3: fly out to the right
+        if (bubble.classList.contains('show')) bubble.classList.remove('show');
+        const t = ease((progress - pauseEnd) / (1 - pauseEnd));
+        x = lerp(centerX, endX, t);
+        rotate = lerp(0, 10, t);
+        el.style.transform = 'translateY(-50%) rotate(' + rotate + 'deg) scaleX(-1)';
+      }
+
+      el.style.left = Math.round(x) + 'px';
+
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        // Reset
+        el.style.left = '-160px';
+        el.style.transform = 'translateY(-50%) scaleX(-1)';
+        bubble.classList.remove('show');
+        supermanActive = false;
+      }
+    }
+
+    // Reset to start
+    el.style.transition = 'none';
+    el.style.left = startX + 'px';
+    el.style.transform = 'translateY(-50%) rotate(-10deg) scaleX(-1)';
     void el.offsetWidth;
 
-    // Start flying
-    el.classList.add('flying');
-
-    // Show bubble at midpoint (~35% of 2.6s = ~910ms)
-    setTimeout(() => { bubble.classList.add('show'); }, 910);
-    // Hide bubble before leaving (~65% = ~1690ms)
-    setTimeout(() => { bubble.classList.remove('show'); }, 1690);
-    // Clean up after animation
-    supermanTimer = setTimeout(() => {
-      el.classList.remove('flying');
-      el.style.left = '-160px';
-      supermanActive = false;
-    }, 2700);
+    requestAnimationFrame(frame);
   };
 })();
 
