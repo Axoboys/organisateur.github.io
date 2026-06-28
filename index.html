@@ -2080,9 +2080,9 @@ calInit();
     const centerX = Math.floor(W / 2 - blobW / 2);
     const startX = -blobW - 20;
     const endX = W + 20;
-    const duration = 2800; // ms total
-    const pauseStart = 0.35; // 35% = arrive at center
-    const pauseEnd = 0.65;   // 65% = leave center
+    const duration = 3400; // ms total
+    const pauseStart = 0.30; // 30% = arrive at center
+    const pauseEnd = 0.75;   // 75% = leave center (longer pause)
 
     let startTime = null;
 
@@ -2105,11 +2105,11 @@ calInit();
         const t = ease(progress / pauseStart);
         x = lerp(startX, centerX, t);
         rotate = lerp(-10, 0, t);
-        el.style.transform = 'translateY(-50%) rotate(' + rotate + 'deg) scaleX(-1)';
+        el.style.transform = 'translateY(-50%) rotate(' + rotate + 'deg)';
       } else if (progress < pauseEnd) {
         // Phase 2: hold at center, show bubble
         x = centerX;
-        el.style.transform = 'translateY(-50%) rotate(0deg) scaleX(-1)';
+        el.style.transform = 'translateY(-50%) rotate(0deg)';
         if (!bubble.classList.contains('show')) bubble.classList.add('show');
       } else {
         // Phase 3: fly out to the right
@@ -2117,7 +2117,7 @@ calInit();
         const t = ease((progress - pauseEnd) / (1 - pauseEnd));
         x = lerp(centerX, endX, t);
         rotate = lerp(0, 10, t);
-        el.style.transform = 'translateY(-50%) rotate(' + rotate + 'deg) scaleX(-1)';
+        el.style.transform = 'translateY(-50%) rotate(' + rotate + 'deg)';
       }
 
       el.style.left = Math.round(x) + 'px';
@@ -2127,7 +2127,7 @@ calInit();
       } else {
         // Reset
         el.style.left = '-160px';
-        el.style.transform = 'translateY(-50%) scaleX(-1)';
+        el.style.transform = 'translateY(-50%)';
         bubble.classList.remove('show');
         supermanActive = false;
       }
@@ -2136,7 +2136,7 @@ calInit();
     // Reset to start
     el.style.transition = 'none';
     el.style.left = startX + 'px';
-    el.style.transform = 'translateY(-50%) rotate(-10deg) scaleX(-1)';
+    el.style.transform = 'translateY(-50%) rotate(-10deg)';
     void el.offsetWidth;
 
     requestAnimationFrame(frame);
@@ -2337,6 +2337,87 @@ const _origOnAuth = null; // already handled via onAuthStateChanged patch below
 
 
 <!-- ===== SUPERMAN BLOB ===== -->
+<div id="superman-blob">
+  <div id="superman-speech-bubble">Saperlipopette, déjà terminé ?! Bravo !! 🌟</div>
+  <svg id="superman-svg" width="130" height="150" viewBox="0 0 130 150">
+    <g style="animation:supermanBodyFloat 1.2s ease-in-out infinite; transform-origin:65px 80px">
+
+      <!-- Cape flowing behind (left side since flying right) -->
+      <path d="M38 70 Q10 60 8 80 Q6 100 35 95 L42 85 Z" fill="#EE1111"/>
+      <path d="M38 65 Q12 55 10 72" fill="none" stroke="#CC0000" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Body (chubby cute blob shape) -->
+      <ellipse cx="68" cy="90" rx="32" ry="36" fill="#5DE8FF"/>
+      <!-- Body shine -->
+      <ellipse cx="55" cy="72" rx="12" ry="15" fill="rgba(255,255,255,0.4)"/>
+
+      <!-- Super S badge on chest -->
+      <ellipse cx="68" cy="95" rx="13" ry="14" fill="#EE1111"/>
+      <ellipse cx="68" cy="95" rx="9" ry="10" fill="#CC0000"/>
+      <text x="68" y="100" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="14" fill="#FFD700">S</text>
+
+      <!-- Belt line -->
+      <rect x="36" y="110" width="64" height="7" rx="3" fill="#FFD700" opacity="0.7"/>
+
+      <!-- HEAD — big cute round head -->
+      <circle cx="68" cy="45" r="28" fill="#5DE8FF"/>
+      <!-- Head shine top-left -->
+      <ellipse cx="54" cy="33" rx="11" ry="13" fill="rgba(255,255,255,0.45)"/>
+      <ellipse cx="57" cy="29" rx="6" ry="7" fill="rgba(255,255,255,0.3)"/>
+
+      <!-- EYES — big sparkly cute eyes -->
+      <!-- Left eye -->
+      <ellipse cx="57" cy="44" rx="9" ry="10" fill="#1a1a2e"/>
+      <ellipse cx="57" cy="44" rx="7" ry="8" fill="#0a0a18"/>
+      <ellipse cx="59.5" cy="40" rx="3.5" ry="4" fill="white"/>
+      <ellipse cx="56" cy="50" rx="1.5" ry="2" fill="rgba(255,255,255,0.35)"/>
+      <!-- Right eye -->
+      <ellipse cx="79" cy="44" rx="9" ry="10" fill="#1a1a2e"/>
+      <ellipse cx="79" cy="44" rx="7" ry="8" fill="#0a0a18"/>
+      <ellipse cx="81.5" cy="40" rx="3.5" ry="4" fill="white"/>
+      <ellipse cx="78" cy="50" rx="1.5" ry="2" fill="rgba(255,255,255,0.35)"/>
+
+      <!-- Determined cute brows -->
+      <path d="M48 33 Q57 29 65 33" fill="none" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M71 33 Q79 29 88 33" fill="none" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Big happy smile -->
+      <path d="M56 57 Q68 68 80 57" fill="none" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Smile filled for cuter look -->
+      <path d="M56 57 Q68 68 80 57 Q68 72 56 57Z" fill="rgba(255,120,160,0.2)"/>
+
+      <!-- Rosy cheeks -->
+      <ellipse cx="46" cy="52" rx="7" ry="5" fill="rgba(255,100,150,0.4)"/>
+      <ellipse cx="90" cy="52" rx="7" ry="5" fill="rgba(255,100,150,0.4)"/>
+
+      <!-- Tiny cute ears -->
+      <ellipse cx="40" cy="43" rx="5" ry="7" fill="#4ACCE8"/>
+      <ellipse cx="96" cy="43" rx="5" ry="7" fill="#4ACCE8"/>
+
+      <!-- Fist punching forward (right) -->
+      <circle cx="110" cy="82" r="13" fill="#4ACCE8"/>
+      <ellipse cx="110" cy="76" rx="8" ry="6" fill="rgba(255,255,255,0.3)"/>
+      <!-- Knuckle lines -->
+      <path d="M103 80 Q110 77 117 80" fill="none" stroke="rgba(0,100,140,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- Little legs trailing (angled up since flying) -->
+      <ellipse cx="62" cy="132" rx="10" ry="7" fill="#4ACCE8" style="transform:rotate(-15deg);transform-origin:62px 132px"/>
+      <ellipse cx="80" cy="128" rx="10" ry="7" fill="#5DE8FF" style="transform:rotate(-8deg);transform-origin:80px 128px"/>
+      <!-- Tiny boots -->
+      <ellipse cx="60" cy="138" rx="8" ry="5" fill="#EE1111" style="transform:rotate(-15deg);transform-origin:60px 138px"/>
+      <ellipse cx="79" cy="135" rx="8" ry="5" fill="#EE1111" style="transform:rotate(-8deg);transform-origin:79px 135px"/>
+
+      <!-- Glow aura -->
+      <ellipse cx="68" cy="88" rx="55" ry="62" fill="none" stroke="rgba(0,212,255,0.2)" stroke-width="7" style="animation:supermanGlow 1.2s ease-in-out infinite"/>
+    </g>
+
+    <!-- Speed lines (to the left, since coming from left) -->
+    <line x1="2" y1="55" x2="32" y2="52" stroke="rgba(0,212,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="72" x2="28" y2="72" stroke="rgba(0,212,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="2" y1="89" x2="30" y2="92" stroke="rgba(0,212,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="4" y1="104" x2="26" y2="106" stroke="rgba(0,212,255,0.25)" stroke-width="1" stroke-linecap="round"/>
+  </svg>
+</div>UPERMAN BLOB ===== -->
 <div id="superman-blob">
   <div id="superman-speech-bubble">Saperlipopette tu as déjà terminé, bravo !!</div>
   <svg width="120" height="90" viewBox="0 0 120 90">
