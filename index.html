@@ -680,6 +680,42 @@
   @keyframes sparkle { 0%,100%{opacity:0;transform:scale(0)} 50%{opacity:1;transform:scale(1)} }
   @keyframes blobEntrance { from{transform:scale(0) translateY(40px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
 
+
+  /* ===== SUPERMAN BLOB ===== */
+  #superman-blob {
+    position:fixed; top:50%; left:-160px;
+    transform:translateY(-50%);
+    z-index:99999; pointer-events:none;
+    transition:none;
+  }
+  #superman-blob.flying { animation:supermanFly 2.6s cubic-bezier(.4,0,.2,1) forwards; }
+  #superman-speech-bubble {
+    position:absolute; top:-62px; left:50%;
+    transform:translateX(-50%) scale(0);
+    background:#1a1a2e; color:#00d4ff;
+    border:2px solid #00d4ff; border-radius:14px;
+    padding:8px 14px; font-family:'Nunito',sans-serif;
+    font-weight:800; font-size:0.8rem; white-space:nowrap;
+    box-shadow:0 4px 20px rgba(0,212,255,0.4);
+    transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  #superman-speech-bubble::after {
+    content:''; position:absolute; bottom:-10px; left:50%;
+    transform:translateX(-50%);
+    border:5px solid transparent; border-top-color:#00d4ff;
+  }
+  #superman-speech-bubble.show { transform:translateX(-50%) scale(1); }
+
+  @keyframes supermanFly {
+    0%   { left:-160px; transform:translateY(-50%) rotate(-8deg) scaleX(-1); }
+    35%  { left:calc(50vw - 55px); transform:translateY(-50%) rotate(0deg) scaleX(-1); }
+    65%  { left:calc(50vw - 55px); transform:translateY(-50%) rotate(0deg) scaleX(-1); }
+    100% { left:calc(100vw + 160px); transform:translateY(-50%) rotate(8deg) scaleX(-1); }
+  }
+  @keyframes supermanBodyFloat { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+  @keyframes supermanCapeWave { 0%,100%{d:path('M70 40 Q90 55 72 70 Q88 65 75 80 L110 55 Z')} 50%{d:path('M70 40 Q95 52 75 68 Q92 60 78 78 L110 55 Z')} }
+  @keyframes supermanGlow { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
 </style>
 </head>
 <body>
@@ -1380,7 +1416,11 @@ function addCheckItem(wrapper, addBtn, text='', checked=false) {
   const txt = document.createElement('input'); txt.type = 'text';
   txt.className = 'check-item-text'; txt.placeholder = 'Élément de liste…'; txt.value = text;
   if (checked) txt.classList.add('done');
-  cb.addEventListener('change', () => { txt.classList.toggle('done', cb.checked); scheduleSave(); });
+  cb.addEventListener('change', () => {
+    txt.classList.toggle('done', cb.checked);
+    if (cb.checked && typeof triggerSupermanBlob === 'function') triggerSupermanBlob();
+    scheduleSave();
+  });
   txt.addEventListener('input', scheduleSave);
   txt.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); addCheckItem(wrapper, addBtn); }
@@ -2025,6 +2065,43 @@ window.calLoadFromData = (data) => {
 calInit();
 
 // ═══════════════════════════════════════════════════════════
+// SUPERMAN BLOB — fires when a checklist item is checked
+// ═══════════════════════════════════════════════════════════
+(function() {
+  let supermanActive = false;
+  let supermanTimer = null;
+
+  window.triggerSupermanBlob = function() {
+    if (supermanActive) return;
+    supermanActive = true;
+    clearTimeout(supermanTimer);
+
+    const el = document.getElementById('superman-blob');
+    const bubble = document.getElementById('superman-speech-bubble');
+
+    // Reset position
+    el.style.animation = 'none';
+    el.style.left = '-160px';
+    void el.offsetWidth;
+
+    // Start flying
+    el.classList.add('flying');
+
+    // Show bubble at midpoint (~35% of 2.6s = ~910ms)
+    setTimeout(() => { bubble.classList.add('show'); }, 910);
+    // Hide bubble before leaving (~65% = ~1690ms)
+    setTimeout(() => { bubble.classList.remove('show'); }, 1690);
+    // Clean up after animation
+    supermanTimer = setTimeout(() => {
+      el.classList.remove('flying');
+      el.style.left = '-160px';
+      supermanActive = false;
+    }, 2700);
+  };
+})();
+
+
+// ═══════════════════════════════════════════════════════════
 // EASTER EGG — BLOB VALO
 // ═══════════════════════════════════════════════════════════
 (function() {
@@ -2212,6 +2289,58 @@ const _origOnAuth = null; // already handled via onAuthStateChanged patch below
       <circle cx="100" cy="50" r="1.5" fill="#00d4ff" style="animation:sparkle 2s ease-in-out infinite 1.4s"/>
       <circle cx="15" cy="90" r="2" fill="#80eaff" style="animation:sparkle 2s ease-in-out infinite 0.3s"/>
     </g>
+  </svg>
+</div>
+
+
+<!-- ===== SUPERMAN BLOB ===== -->
+<div id="superman-blob">
+  <div id="superman-speech-bubble">Saperlipopette tu as déjà terminé, bravo !!</div>
+  <svg width="120" height="90" viewBox="0 0 120 90">
+    <!-- Cape (behind body) -->
+    <g style="animation:supermanBodyFloat 1s ease-in-out infinite">
+      <!-- Cape -->
+      <path d="M68 38 Q92 52 74 68 Q90 62 76 78 L108 54 Z" fill="#CC2200"/>
+      <path d="M68 38 Q92 52 74 68" fill="none" stroke="#AA1800" stroke-width="1.5"/>
+      <!-- Body -->
+      <ellipse cx="52" cy="58" rx="26" ry="30" fill="#4DD9F0"/>
+      <!-- Suit highlight -->
+      <ellipse cx="43" cy="44" rx="10" ry="13" fill="rgba(255,255,255,0.35)"/>
+      <!-- S shield -->
+      <ellipse cx="52" cy="58" rx="11" ry="12" fill="#CC2200"/>
+      <path d="M46 56 Q52 51 58 56 Q52 63 46 56Z" fill="#FFD700"/>
+      <text x="52" y="63" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="13" fill="#FFD700">S</text>
+      <!-- Head -->
+      <circle cx="52" cy="26" r="17" fill="#4DD9F0"/>
+      <!-- Head shine -->
+      <ellipse cx="44" cy="20" rx="7" ry="8" fill="rgba(255,255,255,0.4)"/>
+      <!-- Eyes (determined hero look) -->
+      <ellipse cx="46" cy="26" rx="5" ry="4.5" fill="#1a1a2e"/>
+      <ellipse cx="58" cy="26" rx="5" ry="4.5" fill="#1a1a2e"/>
+      <ellipse cx="47" cy="24" rx="2" ry="2" fill="white"/>
+      <ellipse cx="59" cy="24" rx="2" ry="2" fill="white"/>
+      <!-- Determined brow -->
+      <path d="M41 21 Q46 19 51 21" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+      <path d="M53 21 Q58 19 63 21" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+      <!-- Smile -->
+      <path d="M45 31 Q52 37 59 31" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+      <!-- Blush -->
+      <ellipse cx="40" cy="29" rx="4" ry="2.5" fill="rgba(255,100,150,0.35)"/>
+      <ellipse cx="64" cy="29" rx="4" ry="2.5" fill="rgba(255,100,150,0.35)"/>
+      <!-- Little fist forward -->
+      <circle cx="18" cy="48" r="9" fill="#3DC8E0"/>
+      <ellipse cx="18" cy="44" rx="5" ry="4" fill="rgba(255,255,255,0.25)"/>
+      <!-- Legs trailing behind -->
+      <ellipse cx="56" cy="86" rx="7" ry="5" fill="#3DC8E0" style="transform:rotate(-20deg);transform-origin:56px 86px"/>
+      <ellipse cx="68" cy="82" rx="7" ry="5" fill="#4DD9F0" style="transform:rotate(-10deg);transform-origin:68px 82px"/>
+      <!-- Glow aura -->
+      <ellipse cx="52" cy="54" rx="30" ry="36" fill="none" stroke="rgba(0,212,255,0.25)" stroke-width="5" style="animation:supermanGlow 1s ease-in-out infinite"/>
+    </g>
+    <!-- Speed lines behind -->
+    <line x1="90" y1="30" x2="118" y2="28" stroke="rgba(0,212,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="95" y1="42" x2="120" y2="42" stroke="rgba(0,212,255,0.3)" stroke-width="1" stroke-linecap="round"/>
+    <line x1="92" y1="54" x2="119" y2="56" stroke="rgba(0,212,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="90" y1="64" x2="115" y2="66" stroke="rgba(0,212,255,0.25)" stroke-width="1" stroke-linecap="round"/>
   </svg>
 </div>
 
